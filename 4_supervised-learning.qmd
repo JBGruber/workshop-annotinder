@@ -1,0 +1,150 @@
+---
+title: "Supervised Machine Learning Example"
+subtitle: "Collaborative annotation projects (for supervised machine learning) with *annotinder*"
+author: "Johannes B. Gruber"
+date: "2023-04-28"
+format: html
+bibliography: references.bib
+---
+
+# Introduction
+
+We already briefly discussed supervised machine learning (SML) in the first session.
+The idea is always the same: you train a model using annotated data to then reproduce the classification on unseen documents.
+Importantly, we don't just trust a model as it might contain substantial biases or be flat out wrong for other reasons.
+Instead, every model needs to be validated against documents with known labels before it is actually used.
+There are many different packages dealing with both training and validating models.
+
+
+# Get data
+
+```{bash}
+env/bin/pip install pandas scikit-learn torch simpletransformers
+```
+
+
+```{python}
+import os
+import pandas as pd
+import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
+import torch
+from simpletransformers.classification import ClassificationModel
+df = pd.read_csv('data/insults_gold_annotation.csv')
+df
+```
+
+```{python}
+print(df["value"].value_counts())
+```
+
+# Supervised machine learning step by step
+
+We proceed in 4 (or 5) steps:
+
+1. preprocessing the incoming text
+2. splitting the dataset into training and a test set (which is not included in the model and just used for validation)
+3. fitting (or training) the model 
+4. using the test set to compare predictions against the real values for validation
+5. rinse and repeat if necessary
+
+# Naive Bayes
+
+```{python}
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(df['text'], df['value'], test_size=0.2, random_state=42)
+
+# Preprocess text data and extract features using CountVectorizer
+vectorizer = CountVectorizer()
+X_train_vec = vectorizer.fit_transform(X_train)
+X_test_vec = vectorizer.transform(X_test)
+
+# Train a Multinomial Naive Bayes classifier
+nb = MultinomialNB()
+nb.fit(X_train_vec, y_train)
+
+# Test the classifier on the testing data
+y_pred = nb.predict(X_test_vec)
+
+# Print classification report
+print(classification_report(y_test, y_pred))
+```
+
+# Support Vector Machines
+
+```{python}
+# Train a Support Vector Classifier
+svm = SVC(gamma="scale")
+svm.fit(X_train_vec, y_train)
+
+# Test the classifier on the testing data
+y_pred = svm.predict(X_test_vec)
+
+# Print classification report
+print(classification_report(y_test, y_pred))
+```
+
+# Logistic Regression
+
+```{python}
+clf = LogisticRegression()
+clf.fit(X_train_vec, y_train)
+
+# Test the classifier on the testing data
+y_pred = clf.predict(X_test_vec)
+
+# Print classification report
+print(classification_report(y_test, y_pred))
+```
+
+# RoBERTa
+
+```{python}
+# Preprocess text data
+train_df = pd.concat([X_train, y_train], axis=1)
+train_df['labels'] = train_df['value'].astype('category')
+categories = train_df['labels'].cat.categories
+train_df['labels'] = train_df['labels'].cat.codes
+train_df = train_df[['text', 'labels']]
+
+test_df = pd.concat([X_test, y_test], axis=1)
+test_l = test_df["text"].tolist()
+
+# Configure the RoBERTa classifier
+model_args = {
+  "num_train_epochs": 1, # increase for multiple runs, which can yield better performance (but is slower)
+  "use_multiprocessing": False,
+  "use_multiprocessing_for_evaluation": False,
+  "overwrite_output_dir": True,
+  "reprocess_input_data":  True,
+  "overwrite_output_dir":  True,
+  "fp16":  True,
+  "save_steps":  -1,
+  "save_eval_checkpoints":  False,
+  "save_model_every_epoch":  False,
+  "silent":  True,
+}
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+roberta_model = ClassificationModel(model_type="roberta",
+                                    model_name="roberta-base",
+                                    # Use GPU if available
+                                    use_cuda=torch.cuda.is_available(),
+                                    args=model_args)
+
+
+# Train the classifier
+roberta_model.train_model(train_df)
+
+# Test the classifier on the testing data
+
+predictions, raw_outputs = roberta_model.predict(test_l)
+
+# Print classification report
+print(classification_report(y_test, np.take(categories, predictions)))
+```
+

@@ -1,0 +1,41 @@
+---
+title: "Collaborative annotation projects (for supervised machine learning) with *annotinder*"
+subtitle: "NCRM/Exeter Computational Communication Methods Spring School"
+date: "2023-04-28"
+format: gfm
+---
+
+# Schedule
+
+| time        | Session                             |
+|-------------|-------------------------------------|
+| 09:30-10:30 | Introducing AmCAT + annotinder      |
+| 11:00-12:00 | Collaborative Annotation Theory     |
+| 13:00-14:00 | Collaborative Annotation Example    |
+| 14:30-15:30 | Supervised Machine Learning Example |
+
+# Required software
+
+To follow along the examples, we need a couple of Python and R packages.
+I also use [VSCodium](https://vscodium.com/) (a fully open source version of VSCode) to go through the notebooks for the sessions.
+You should install either that, VSCode or [RStudio Desktop](https://posit.co/download/rstudio-desktop/) and [Quarto](https://quarto.org/docs/get-started/) (which is an alternative notebook format that works well with different languages).
+
+To get the required Python packages, create a virtual environment in your project folder after downloading this repo:
+
+```{bash}
+#| eval: false
+python3 -m venv env
+env/bin/pip install -r requirements.txt
+```
+
+You should also install `R`, which is required to run `annotinder-r` (the package we use to create and manage annotation jobs): <https://cran.rstudio.com/>
+
+Most R packages install quickly, but you can get ahead and run this code in a new R session to get missing packages:
+
+```{r}
+#| eval: false
+if (!requireNamespace("rlang", quietly = TRUE)) install.packages("rlang", dependencies = TRUE)
+rlang::check_installed(c("tidycomm", "gt", "ggplot2", "dplyr"))
+if (!rlang::is_installed("annotinder")) remotes::install_github("ccs-amsterdam/annotinder-r")
+```
+

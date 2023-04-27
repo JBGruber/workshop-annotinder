@@ -1,0 +1,79 @@
+---
+title: "unit"
+format: revealjs
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  fig.align = "center",
+  results='asis'
+)
+library(stringi)
+```
+
+## sub-word
+
+```{r}
+text <- "I like coffee. I like tea. What about you?"
+stri_extract_all_regex(text, "\\w") |> 
+  unlist() |> 
+  (\(x) paste("-", x, "\n"))() |> 
+  cat()
+```
+
+
+## word
+
+```{r}
+text <- "I like coffee. I like tea. What about you?"
+stri_extract_all_regex(text, "\\w+") |> 
+  unlist() |> 
+  (\(x) paste("-", x, "\n"))() |> 
+  cat()
+```
+
+## phrase
+
+```{r}
+c(
+  "I like",
+  "coffee",
+  "I like",
+  "tea",
+  "What about you?"
+) |> 
+  (\(x) paste("-", x, "\n"))() |> 
+  cat()
+```
+
+## sentences
+
+```{r}
+stri_split_regex(text, "(?<=[[:punct:]])\\s(?=[A-Z])") |> 
+  unlist() |> 
+  (\(x) paste("-", x, "\n"))() |> 
+  cat()
+```
+
+## paragraphs
+
+```{r}
+cat("I like coffee. I like tea. What about you?")
+```
+
+## documents
+
+Alice: Hey Bob, I've been thinking about people's beverage preferences. Some people enjoy drinking coffee, while others prefer tea.
+
+Bob: That's true, Alice. It's interesting how different people have different tastes. For example: **I like coffee. I like tea. What about you?**
+
+Alice: Oh, I'm more of a tea person myself. I find it soothing and calming.
+
+Bob: See, that's a perfect example of how the level of analysis can make a difference in understanding people's preferences. If we were to analyze this conversation at the level of individual words, we might miss the context and think that both coffee and tea are liked by both of us.
+
+Alice: You're right! Analyzing at the phrase or sentence level would provide a clearer picture of our individual preferences. So, the level of analysis is really important in understanding the nuances of a conversation or text.
+
+Bob: Exactly! It's essential to choose the right level of analysis to accurately interpret and draw meaningful conclusions from any text or conversation.")
+

@@ -1,0 +1,198 @@
+---
+title: "Collaborative Annotation Example"
+subtitle: "Collaborative annotation projects (for supervised machine learning) with *annotinder*"
+author: "Johannes B. Gruber"
+date: "2023-04-28"
+format: html
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  eval = FALSE
+)
+```
+
+## Select the unit of analysis
+
+
+https://annotatoe.netlify.app/
+
+## Sample/Collect the data
+
+```{r}
+library(amcat4r)
+amcat_login("https://johannes-amcat.norwayeast.cloudapp.azure.com/amcat")
+set.seed(1)
+sample_tweets <- readLines("media/sample_ids.txt") |> 
+  sample(size = 250L)
+head(sample_tweets)
+```
+
+```{r}
+tweets <- query_documents(index = "immigration_insults",
+                          fields = NULL, 
+                          filters = list(status_id = sample_tweets),
+                          per_page = 10000)
+tweets
+```
+
+## Prepare the data (Create units)
+
+```{r}
+library(annotinder)
+units <- create_units(tweets, set_text(name = "text", value = text), id = "status_id") 
+```
+
+## Define the categories/Develop a Coding Codebook
+
+```{r}
+instructions <- "You will be given a sample of tweets about immigration and integration related issues. The original tweets were in English, French, Spanish, and German. But all have been translated to English.
+
+For each tweet, please determine if it contains ethnic insults. An ethnic insult is any language or speech that is derogatory or offensive toward a particular ethnic or racial group. 
+
+Coding instructions:
+
+1. Read the text of each tweet carefully, paying close attention to details such as the tone and language used.
+2. Determine if the tweet contains language or speech that is derogatory or offensive toward a particular ethnic group.
+3. Base your classification solely on the content of the tweet itself and not on any external factors such as the identity of the tweeter or any contextual information.
+4. You can also record how sure you after you have coded a tweet."
+```
+
+
+```{r}
+welcome <- create_unit(
+  "welcome",
+  type = "train",
+  set_markdown("text", paste0("# Coding Instructions\n\n", instructions)),
+  set_question(name = "welcome", question = "Start Annotating", type = "confirm")
+)
+q1 <- question(name = "ethnic insults", 
+               question = "Does this tweet contain ethnic insults?",
+               type = "annotinder",
+               codes = c(crimson = "Yes", lightgreen = "No"),
+               instruction = instructions)
+q2 <- question(name = "confidence",
+               question = "How sure are you about your choice",
+               type = "scale",
+               codes = c("Not at all", "Slightly", "Somewhat", "Fairly", "Completely"),
+               instruction = instructions)
+
+```
+
+
+```{r}
+codebook <-  create_codebook(q1, q2)
+```
+
+## Code/annotate the data
+
+This time, we do not start the annotator locally, but upload the job to a server, so we can all code at once!
+
+```{r}
+# usually, you need to enter a password the first time, but you can save the token and retrieve it later
+backend_connect(host = "https://annotatoe.up.railway.app", 
+                username = "johannesb.gruber@gmail.com", 
+                token = readRDS("~/annotatoe_token.rds")) 
+```
+
+
+```{r}
+job_id <- upload_job(
+  title = "ethnic insults", 
+  units = c(welcome, units), 
+  codebook = codebook,
+  rules = rules_fixedset(),
+  debrief = debrief(message = "# Thank you for coding with AnnoTinder!\n\nCheck out updates on our website", 
+                    link = "http://amcat.nl/", 
+                    link_text = "AmCAT Website",
+                    qr = TRUE)
+)
+```
+
+```{r}
+results <- download_annotations(job_id)
+```
+
+
+## Calculate reliability
+
+```{r}
+rlang::check_installed("tidycomm")
+library(tidycomm)
+library(gt)
+icr <- results |> 
+  select(unit_id, coder_id, variable, value) |> 
+  filter(variable == "ethnic insults") |> 
+  pivot_wider(id_cols = c(unit_id, coder_id), names_from = variable, values_from = value) |> 
+  test_icr(unit_id, 
+           coder_id,
+           na.omit = TRUE,
+           agreement = TRUE,
+           holsti = TRUE,
+           kripp_alpha = TRUE,
+           cohens_kappa = FALSE,
+           fleiss_kappa = TRUE,
+           brennan_prediger = TRUE,
+           lotus = TRUE,
+           s_lotus = TRUE) |> 
+  pivot_longer(-c(Variable, Level))
+icr |> 
+  gt() %>% 
+  tab_header(title = "Intercoder Reliability") %>% 
+  data_color(
+    columns = value,
+    colors = scales::col_numeric(
+      palette = c(
+        "red", "orange", "green"
+      ),
+      domain = c(0.1, 1))
+  ) %>% 
+  fmt_number(value, decimals = 3)
+```
+
+
+## Analyze the (preliminary) outcome
+
+```{r}
+results |> 
+  filter(variable == "ethnic insults") |> 
+  count(value)
+```
+
+```{r}
+results |> 
+  filter(variable == "confidence") |> 
+  count(value) |> 
+  mutate(value = factor(value, levels = c("Not at all", "Slightly", "Somewhat", "Fairly", "Completely"))) |> 
+  ggplot(aes(x = value, y = n, fill = value)) +
+  geom_col() +
+  scale_fill_manual(values = c("#00FF00", "#7FD200", "#FFA500", "#FF5200", "#FF0000"))
+```
+
+
+## Make a gold standard for training
+
+If reliability is high enough, we can continue to create a gold standard annotation set.
+Usually this is done by checking on which cases coders disagree and having experts decide who is right.
+For the sake of this workshop, we take a shortcut and simply use the code that has been used most often between coders.
+
+```{r}
+decide <- function(x) {
+  tab <- table(x)
+  names(tab)[which.max(tab)]
+}
+gold <- results |> 
+  filter(variable == "ethnic insults") |> 
+  group_by(unit_id) |> 
+  summarise(value = decide(value)) |> 
+  left_join(tweets, by = c("unit_id" = "status_id")) |> 
+  select(unit_id, value, text)
+```
+
+I save this data in a CSV file for the next session, where we train a model to reproduce our coding on the remaining data.
+
+```{r}
+write.csv(gold, "data/insults_gold_annotation.csv")
+```
+

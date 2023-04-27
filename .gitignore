@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.Renviron
+env
+data
+notes.md
+media/amcat-test_key.pem
+media/machine-learning.pptx
+media/unit_files

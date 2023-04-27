@@ -1,0 +1,6 @@
+git+https://github.com/ccs-amsterdam/amcat4py.git
+pandas
+scikit-learn
+torch
+simpletransformers
+jupyter

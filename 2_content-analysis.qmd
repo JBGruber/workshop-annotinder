@@ -1,0 +1,256 @@
+---
+title: "Session 1: Overview, Background and Some Theory"
+subtitle: "Textanalyse in R: eine Einführung"
+author: "Johannes B. Gruber"
+date: "2023-04-28"
+format: 
+  revealjs:
+    smaller: true
+    incremental: true
+    logo: media/opted.png
+    css: custom.css
+bibliography: references.bib
+---
+
+## Text/Content Analysis in Social Science
+
+- Researchers have long recognised that much of what is social interaction is expressed through words.
+- Traditionally these texts are analysed using content analysis in one of several forms (e.g., Quantitative Content Analysis, Discourse Analysis or Hermeneutic Content Analysis).
+- The goal was to understand what actors are saying and writing and sometimes why they might say or write something.
+- Recently scholars struggle with volume: ***there are often simply too many relevant texts***.
+- At least linear increase of costs with larger text corpora (structured collections of text).
+
+## Promises of Automatic Content Analysis
+
+- *Systematic analysis* of large-scale text collections without massive funding support.
+- Depending on the method, results are available almost immediately
+- Perfect reliability in the sense that presented the same data and method, the computer will generate same results.
+
+## Pitfalls of Automatic Content Analysis: Four Principles
+
+From @grimmerTextDataPromise2013:
+
+1. All quantitative models of language are wrong—but some are useful
+2. Quantitative methods augment humans, not replace them
+3. There is no globally best method for automated text analysis
+4. Validate, Validate, Validate!
+
+- Problem with 4: validation needs human annotation (for now?).
+
+## Classification of ACA approaches
+
+```{r}
+library(magick)
+overview <- image_read_pdf("./media/2._classification of ACA approaches.pdf")
+image_resize(overview, geometry_size_percent(75))
+```
+
+(@boumansTakingStockToolkit2016, p.10)
+
+## Content Analysis
+
+In essence: Turning qualitative data into quantitative representations:
+
+![network visualization and analysis from text annotations](media/Humanités_Numériques.jpeg){.absolute top=120 left=0 width="450"}
+![DNA software for network visualization and analysis from digital text](media/dna.png){.absolute top=120 left=550 width="450"}
+
+## Content Analysis {visibility="uncounted"}
+
+In essence: Turning qualitative data into quantitative representations:
+
+![](media/hotdog1.png){.absolute top=120 left=100 width="350"}
+![](media/hotdog2.png){.absolute top=120 left=600 width="350"}
+
+# Steps of a Content Analysis
+
+<!-- 1.  Select the unit of analysis -->
+<!-- 2.  Sample the data -->
+<!-- 3.  Define the categories -->
+<!-- 4.  Prepare the data -->
+<!-- 5.  Develop a coding scheme -->
+<!-- 6.  Train Coders -->
+<!-- 7.  Code/annotate the data -->
+<!-- 8.  Calculate reliability -->
+<!-- 9.  (Scale the analysis using supervised learning) -->
+<!-- 10. Analyze the outcome -->
+<!-- 11. Interpret the results -->
+
+
+
+## Select the unit of analysis
+
+- Key consideration for effective content analysis
+- Determines the level at which data will be analyzed
+
+::: {.nonincremental .fragment }
+- Examples:
+  - individual words
+  - phrases
+  - sentences
+  - paragraphs
+  - documents
+
+![](media/unit.gif){.absolute top=400 height="300" style="border: 5px solid #555;"}
+:::
+
+![](media/ca-circle.png){.absolute top=80 left=800 height="600"}
+
+## Sample/Collect the data
+
+Issues:
+
+- Do you have access to the data? [@freelonapi2018]
+- Do you have the all/only the **relevant** data? [@krippendorff2004, p.278]
+
+![](media/sampling.png){.fragment width="800"}
+
+
+![](media/ca-circle.png){.absolute top=80 left=900 height="600"}
+
+```{r}
+#| class: fragment absolute
+#| top: 80
+overview <- image_read_pdf("./media/cleaning-1.pdf")
+image_resize(overview, geometry_size_percent(95))
+```
+
+## Prepare the data
+
+- Get data into suitable format for efficient analysis
+- For example:
+  - Transcribing audio recordings
+  - Digitizing text documents
+  - Unifying content from different sources
+- Tips for Preparing Data:
+  - Plan and allocate sufficient time for data preparation tasks
+  - Develop a consistent process for data cleaning and formatting
+  - Use tools and software to automate and streamline data preparation tasks
+  - Document data preparation steps and decisions to ensure transparency and reproducibility
+
+
+<center>![](media/old_news.jpeg){height="300"}</center>
+![](media/ca-circle.png){.absolute top=80 left=900 height="600"}
+
+## Define the categories
+
+- Categories: labels used to organize and classify data
+- Crucial for effective content analysis
+- Key characteristics of good categories:
+  - Clearly defined
+  - Mutually exclusive
+- Examples:
+  - Political content on social media (e.g., to narrow a sample)
+  - Hatespeech on Twitter
+  - Emotions in Social Media Posts
+- Categories: 
+  - Political, Non-Political
+  - Hatespeech, Non-Hatespeech
+  - Happiness, Sadness, Anger, Fear, Surprise, Disgust
+- Good practice:
+  - Use existing literature or theories to inform category development
+  - Test and refine categories through pilot coding or expert feedback
+
+![](media/ca-circle.png){.absolute top=80 left=900 height="600"}
+
+## Develop a Coding Scheme/Codebook and Train Coders
+
+- Set of rules and procedures for assigning data to categories
+- Essential for effective and consistent content analysis
+- Key characteristics of a good coding scheme:
+  - Reliable
+  - Consistent
+- Ensures consistent interpretation and classification of data
+  - by different people
+  - over time
+  - for different material
+- Train coders and conduct practice sessions to ensure consistency
+
+
+![](media/codebook.png){.fragment .absolute top=80 height="600" style="border: 5px solid #555;"}
+![](media/codebook2.png){.fragment .absolute top=80 left=450 height="600" style="border: 5px solid #555;"}
+
+![](media/ca-circle.png){.absolute top=80 left=900 height="600"}
+
+
+## Code/annotate the data
+
+- *The* key component of content analysis
+- Plan more time than you think you need!
+- Use `annotinder` (or another good annotation software)
+
+![](https://openclipart.org/download/280949/SnowedUnder.svg){height="400"}
+![](media/ca-circle.png){.absolute top=80 left=900 height="600"}
+
+## Calculate reliability
+
+- Steps:
+  - Two or more coders independently code a portion of the data
+  - Compare coded data to identify agreement and disagreement
+  - Calculate reliability metrics (e.g., Krippendorff’s $\alpha$), to to correct the impact of chance
+- Ensures that coding is consistent, accurate, and replicable
+- Discover problems or inconsistencies in your categories/codebook
+- Enhances the credibility and trustworthiness of research findings
+- What is good reliability? $\alpha$ > 0.8 = *reliable*, 0.8 > $\alpha$ > 0.667 = *tentative conclusions*, etc. [@Krippendorff, pp. 241-243]
+
+![](media/intercoder1.png){.fragment .absolute}
+![](media/ca-circle.png){.absolute top=80 left=900 height="600"}
+
+## Scale the Analysis Using Supervised Learnin
+
+Basic Steps (More later):
+
+::: {.nonincremental}
+1. Some documents are sorted into categories by hand
+1. This training data is then used to train (or fine-tune) a statistical model
+1. The model is used to infer the categories of unseen text
+:::
+
+**Unrealiable or unsystematic coding leads to biased and/or unrealiable models**
+![](media/machine-learning-0.png){.absolute top=250 height="400"}
+![](media/machine-learning-1.png){.absolute .fragment top=250 height="400"}
+![](media/ca-circle.png){.absolute top=80 left=900 height="600"}
+
+## Analyze the outcome
+
+- Process of identifying patterns, themes, and trends in the coded data
+- Can be done using various statistical and qualitative techniques
+- Critical for drawing meaningful insights and conclusions patterns, trends, and relationships within the data
+- Examples:
+  - Calculate frequency and percentage of categories in a database
+  - Examine differences between categories in terms of authors, words, narratives, language, etc.
+  - Compare frequency and percentage of categories between different subsamples
+
+```{r}
+#| class: fragment absolute
+#| top: 80
+overview <- image_read_pdf("./media/framestime-1.pdf")
+image_resize(overview, geometry_size_percent(95))
+```
+
+![](media/ca-circle.png){.absolute top=80 left=900 height="600"}
+
+## Interpret the results
+
+- Process of understanding the analysis results in the context of the research question and data collection
+- Involves drawing conclusions and making recommendations based on the findings
+- Crucial for generating meaningful insights and contributions to the research field
+
+![](media/ca-circle.png){.absolute top=80 left=900 height="600"}
+
+## To Sum Up {style="font-size: 100%;"}
+
+How to achieve good validity and reliability in manual annotation:
+
+::: {.nonincremental}
+- The researcher provides a clear <span style="color:#EDD54C;">definition</span> of what constructs need to be measured
+- The researcher <span style="color:#EDD54C;">operationalizes</span> how these constructs are to be measured
+- A <span style="color:#EDD54C;">codebook</span> is created that specifies rules, guidelines and examples for what how human coders should code the texts 
+- For many constructs coders might need (extensive) <span style="color:#EDD54C;">training</span>
+- A sample of texts is coded by multiple coders. This allows us to calculate their inter-coder <span style="color:#EDD54C;">reliability</span>
+- If inter-coder reliability is too low, we might need <span style="color:#EDD54C;">more training</span>, and maybe even <span style="color:#EDD54C;">adjust our codebook</span>, operationalization or definition!!
+:::
+
+<span style="color:#EDD54C;">Think of this every time you hear someone make big gut-feeling claims about content!</span>
+
+# References
+
