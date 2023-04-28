@@ -5,13 +5,9 @@ author: "Johannes B. Gruber"
 date: "2023-04-28"
 format: html
 bibliography: references.bib
+execute:
+  eval: false
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  eval = FALSE
-)
-```
 
 ## Select the unit of analysis
 
@@ -19,6 +15,29 @@ knitr::opts_chunk$set(
 https://annotatoe.netlify.app/
 
 ## Sample/Collect the data
+
+```{python}
+from amcat4py import AmcatClient
+import random
+amcat = AmcatClient("https://johannes-amcat.norwayeast.cloudapp.azure.com/amcat")
+if amcat.login_required():
+    amcat.login()
+
+docs = list(
+    amcat.query(
+        "immigration_insults",
+        fields=("date", "_id"),
+        queries="(islam* OR muslim OR immigrant OR terrorist) AND attack",
+        filters={"date": {"gte": "2017-01-01"}},
+    )
+)
+len(docs)
+sample_ids = random.sample([_['_id'] for _ in docs], 10)
+print(sample_ids)
+
+sample_docs = list(amcat.query("immigration_insults", fields=None, filters={"status_id": sample_ids}))
+```
+
 
 ```{r}
 library(amcat4r)
@@ -90,7 +109,7 @@ codebook <-  create_codebook(q1, q2)
 This time, we do not start the annotator locally, but upload the job to a server, so we can all code at once!
 
 ```{r}
-# usually, you need to enter a password the first time, but you can save the token and retrieve it later
+# usually, you need to enter a password the first time, but you can save the token and retrieve it later (which I did)
 backend_connect(host = "https://annotatoe.up.railway.app", 
                 username = "johannesb.gruber@gmail.com", 
                 token = readRDS("~/annotatoe_token.rds")) 

@@ -5,13 +5,9 @@ author: "Johannes B. Gruber"
 date: "2023-04-28"
 format: html
 bibliography: references.bib
+execute:
+  eval: false
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  eval = FALSE
-)
-```
 
 # `AmCAT`
 ## What is AmCAT? {#what-is-amcat}

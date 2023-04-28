@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Johannes B. Gruber">
+<meta name="dcterms.date" content="2023-04-28">
+
+<title>Introducing AmCAT &amp; annotinder</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="1_introducing-amcat-annotinder_files/libs/clipboard/clipboard.min.js"></script>
+<script src="1_introducing-amcat-annotinder_files/libs/quarto-html/quarto.js"></script>
+<script src="1_introducing-amcat-annotinder_files/libs/quarto-html/popper.min.js"></script>
+<script src="1_introducing-amcat-annotinder_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="1_introducing-amcat-annotinder_files/libs/quarto-html/anchor.min.js"></script>
+<link href="1_introducing-amcat-annotinder_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="1_introducing-amcat-annotinder_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="1_introducing-amcat-annotinder_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="1_introducing-amcat-annotinder_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="1_introducing-amcat-annotinder_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Introducing AmCAT &amp; annotinder</h1>
+<p class="subtitle lead">Collaborative annotation projects (for supervised machine learning) with <em>annotinder</em></p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Johannes B. Gruber </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">April 28, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="amcat" class="level1">
+<h1><code>AmCAT</code></h1>
+<section id="what-is-amcat" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-amcat">What is AmCAT?</h2>
+<ul>
+<li>Free and Open Source software suite for text analysis</li>
+<li>Two main goals: to <strong>standardize</strong> text analysis tasks with <strong>easy to use software</strong> (while offering quality-of-life features for power users)</li>
+<li>Great way to store, search, share and present data collections for teams or individual researchers</li>
+<li>Funded by OPTED – Observatory for Political Texts in European Democracies</li>
+</ul>
+<p><img src="media/amcat-flow.drawio.png" class="img-fluid"></p>
+<p>(Learn more at <a href="https://amcat.nl/" class="uri">https://amcat.nl/</a>)</p>
+</section>
+<section id="team-amcat" class="level2">
+<h2 class="anchored" data-anchor-id="team-amcat">Team AmCAT</h2>
+<p>At Department of Communication Science at Vrije Universiteit Amsterdam:</p>
+<ul>
+<li>Wouter van Atteveldt</li>
+<li>Johannes B. Gruber</li>
+<li>Farzam Fanitabasi (formally)</li>
+<li>Kasper Welbers</li>
+</ul>
+<p>Since everything is open source, other people made improvements through <em>pull requests</em>.</p>
+</section>
+<section id="what-is-opted" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-opted">What is OPTED</h2>
+<p><img src="media/opted_overview.png" class="img-fluid"></p>
+<p>Example: Cool collection of text repositories and tools: <a href="https://meteor.opted.eu/" class="uri">https://meteor.opted.eu/</a></p>
+<p><img src="media/meteor.png" class="img-fluid"></p>
+</section>
+<section id="why-use-amcat" class="level2">
+<h2 class="anchored" data-anchor-id="why-use-amcat">Why use AmCAT</h2>
+<ul>
+<li>You are part of a team of researchers doing text analysis</li>
+<li>You want to share your data in a safe way (with fine-grained access management for different parts of the data)</li>
+<li>You have large datasets that are better stored on a server and you need server software made for researchers</li>
+</ul>
+</section>
+<section id="installing-the-amcat-suite-locally-through-docker" class="level2">
+<h2 class="anchored" data-anchor-id="installing-the-amcat-suite-locally-through-docker">Installing the AmCAT suite locally through Docker</h2>
+<ol type="1">
+<li>Head to Github repo at <a href="https://github.com/ccs-amsterdam/amcat4docker" class="uri">https://github.com/ccs-amsterdam/amcat4docker</a></li>
+<li>Choose one of the provided versions:</li>
+</ol>
+<table class="table">
+<colgroup>
+<col style="width: 27%">
+<col style="width: 72%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>image</th>
+<th>purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>docker-compose</td>
+<td>Recommended for local installations</td>
+</tr>
+<tr class="even">
+<td>docker-compose-https</td>
+<td>Recommended for publicly reachable instance (enables https support)</td>
+</tr>
+<tr class="odd">
+<td>docker-compose-nightlies</td>
+<td>Nightly images with latest versions of all packages</td>
+</tr>
+<tr class="even">
+<td>docker-compose-feature</td>
+<td>Can be used to build images from GitHub branches</td>
+</tr>
+</tbody>
+</table>
+<ol start="3" type="1">
+<li>Download the chosen Docker Compose file (if installed, you can use <code>curl</code>)</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-O</span> https://raw.githubusercontent.com/ccs-amsterdam/amcat4docker/main/docker-compose.yml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="4" type="1">
+<li>Install AmCAT through Docker Compose</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker-compose</span> up <span class="at">--pull</span><span class="op">=</span><span class="st">"missing"</span> <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="5" type="1">
+<li>Check if all worked well</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> ps</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Open: <a href="http://localhost/" class="uri">http://localhost/</a></p>
+<p><img src="media/amcat-local.png" class="img-fluid"></p>
+<section id="installing-amcat-on-a-cloud-computing-platform" class="level3">
+<h3 class="anchored" data-anchor-id="installing-amcat-on-a-cloud-computing-platform">Installing AmCAT on a cloud computing platform</h3>
+<ol type="1">
+<li>Make an account (e.g., a free trial account at Azure):</li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="media/azure-free.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">https://azure.microsoft.com/en-us/free/</figcaption><p></p>
+</figure>
+</div>
+<ol start="2" type="1">
+<li>Create a virtual machine with Ubuntu (B2ms seems like a good cheap option):</li>
+</ol>
+<p><img src="media/azure-quickstart.png" class="img-fluid"> <img src="media/azure-vm.png" class="img-fluid"></p>
+<ol start="3" type="1">
+<li>Get a URL (DNS) in the overview pane:</li>
+</ol>
+<p><img src="media/azure-dns.png" class="img-fluid"></p>
+<ol start="4" type="1">
+<li>Enable SSH and connect to the VM</li>
+</ol>
+<p><img src="media/azure-ssh.png" class="img-fluid"></p>
+<ol start="5" type="1">
+<li><p>Install docker and Docker Compose (you can follow the steps here: <a href="https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository" class="uri">https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository</a>)</p></li>
+<li><p>Download the Docker Compose file for servers (with https enabled):</p></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-O</span> https://raw.githubusercontent.com/ccs-amsterdam/amcat4docker/main/docker-compose-https.yml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="7" type="1">
+<li>Change the server address localhost and example.com to your URL (DNS)</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> docker-compose-https.yml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="media/azure-docker-compose.png" class="img-fluid"></p>
+<ol start="8" type="1">
+<li>Install AmCAT through Docker Compose</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker compose <span class="at">-f</span> docker-compose-https.yml up <span class="at">--pull</span><span class="op">=</span><span class="st">"missing"</span> <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="9" type="1">
+<li>Enable secure https connections</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker exec <span class="at">-it</span> ngincat certbot <span class="at">--nginx</span> <span class="at">-d</span> johannes-amcat.norwayeast.cloudapp.azure.com</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="load-some-test-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-some-test-data">Load some test data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> exec <span class="at">-t</span> amcat4 amcat4 create-test-index</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Head over to <a href="http://localhost/" class="uri">http://localhost/</a> or <a href="https://johannes-amcat.norwayeast.cloudapp.azure.com/" class="uri">https://johannes-amcat.norwayeast.cloudapp.azure.com/</a></p>
+</section>
+<section id="configure-overall-access-and-other-things" class="level2">
+<h2 class="anchored" data-anchor-id="configure-overall-access-and-other-things">Configure overall access (and other things)</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker exec <span class="at">-it</span> amcat4 amcat4 config</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="media/amcat-config.png" class="img-fluid"></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker restart amcat4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="media/amcat-guest.png" class="img-fluid"></p>
+<p><img src="media/amcat-guest-2.png" class="img-fluid"></p>
+</section>
+<section id="control-amcat-through-the-api" class="level2">
+<h2 class="anchored" data-anchor-id="control-amcat-through-the-api">Control AmCAT through the API</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> venv env</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">env/bin/pip</span> install git+https://github.com/ccs-amsterdam/amcat4py.git</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> env/bin/activate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> amcat4py <span class="im">import</span> AmcatClient</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>amcat <span class="op">=</span> AmcatClient(<span class="st">"http://localhost/amcat"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> amcat.login_required():</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    amcat.login()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can first list all available indexes, as a document collection is called in Elasticsearch and thus in amcat:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>amcat.list_indices()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You can see that the test index we added earlier is here and that it is called “state_of_the_union”. To see everyone who has been granted access to an index we can use:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>amcat.list_index_users(index<span class="op">=</span><span class="st">"state_of_the_union"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To see what an index looks like, we can query it leaving all fields blank to request all data at once:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sotu <span class="op">=</span> <span class="bu">list</span>(amcat.query(<span class="st">"state_of_the_union"</span>, fields<span class="op">=</span><span class="va">None</span>))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(sotu))</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k, v <span class="kw">in</span> sotu[<span class="dv">1</span>].items():</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(k <span class="op">+</span> <span class="st">"("</span> <span class="op">+</span> <span class="bu">str</span>(<span class="bu">type</span>(v)) <span class="op">+</span> <span class="st">"): "</span> <span class="op">+</span> <span class="bu">str</span>(v)[<span class="dv">0</span>:<span class="dv">100</span>] <span class="op">+</span> <span class="st">"..."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Knowing now what a document should look like in this index, we can upload a new document to get familiar with the process:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>new_doc <span class="op">=</span> {</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"title"</span>: <span class="st">"test"</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"text"</span>: <span class="st">"test"</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"date"</span>: <span class="st">"2022-01-01"</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"president"</span>: <span class="st">"test"</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"year"</span>: <span class="st">"2022"</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"party"</span>: <span class="st">"test"</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"url"</span>: <span class="st">"test"</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>amcat.upload_documents(<span class="st">"state_of_the_union"</span>, [new_doc])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s see if the the new document is in the index:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pprint</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>pp <span class="op">=</span> pprint.PrettyPrinter(depth<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>res<span class="op">=</span><span class="bu">list</span>(amcat.query(<span class="st">"state_of_the_union"</span>, fields<span class="op">=</span><span class="va">None</span>, filters<span class="op">=</span>{<span class="st">"title"</span>: <span class="st">"test"</span>}))</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>pp.pprint(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Instead of adding whole documents, you can also change fields in an index. Fields are similar to columns in a table in Excel. However, you need to define the type of a field upon its creation and make sure that you later only add data which adheres to the specifications of the type (otherwise you will get an error). To learn more about the fields in the test index, you can use:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>amcat.get_fields(<span class="st">"state_of_the_union"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You can see that there are five different types in this index: date, keyword, text, url and double. Keyword, text, url are all essentially the same type in <code>Python</code>, namely character strings. But text fields are hidden when the guest role is metareader. The date needs to be in the format YYYY-MM-DD and is automatically converted into a datetime class. Year should be a double, i.e., a numeric value or integer.</p>
+<p>You can add new fields to this, for example, if you want to add a keyword to the documents:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>amcat.set_fields(<span class="st">"state_of_the_union"</span>, {<span class="st">"keyword"</span>:<span class="st">"keyword"</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can add something to the new field and see if it shows up:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>test_doc <span class="op">=</span> <span class="bu">list</span>(amcat.query(<span class="st">"state_of_the_union"</span>, fields<span class="op">=</span>[<span class="st">"id"</span>], filters<span class="op">=</span>{<span class="st">"title"</span>: <span class="st">"test"</span>}))[<span class="dv">0</span>]</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>amcat.update_document(<span class="st">"state_of_the_union"</span>, doc_id<span class="op">=</span>test_doc[<span class="st">"_id"</span>], body<span class="op">=</span>{<span class="st">"keyword"</span>: <span class="st">"test"</span>})</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>res<span class="op">=</span><span class="bu">list</span>(amcat.query(<span class="st">"state_of_the_union"</span>, fields<span class="op">=</span>[<span class="st">"title"</span>, <span class="st">"keyword"</span>], filters<span class="op">=</span>{<span class="st">"title"</span>: <span class="st">"test"</span>}))</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>pp.pprint(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now that we have a better idea of what an index is and how it looks like, we can create a new one:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>amcat.create_index(index<span class="op">=</span><span class="st">"new_index"</span>, guest_role<span class="op">=</span><span class="st">"metareader"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>I created this index so that unauthenticated users (guests) have access to meta information, but not the actual text (which should be a safe way to store, for example, copyrighted material).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>amcat.list_indices()</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>amcat.get_fields(<span class="st">"new_index"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As you can see, the newly created index already contains fields. Before you fill the new index, you should define what the fields should look like:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>amcat.set_fields(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"new_index"</span>,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"date"</span>: {<span class="st">"name"</span>: <span class="st">"date"</span>, <span class="st">"type"</span>: <span class="st">"date"</span>},</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"party"</span>: {<span class="st">"name"</span>: <span class="st">"party"</span>, <span class="st">"type"</span>: <span class="st">"text"</span>},</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"president"</span>: {<span class="st">"name"</span>: <span class="st">"president"</span>, <span class="st">"type"</span>: <span class="st">"text"</span>},</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"text"</span>: {<span class="st">"name"</span>: <span class="st">"text"</span>, <span class="st">"type"</span>: <span class="st">"text"</span>},</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"title"</span>: {<span class="st">"name"</span>: <span class="st">"title"</span>, <span class="st">"type"</span>: <span class="st">"text"</span>},</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"url"</span>: {<span class="st">"name"</span>: <span class="st">"url"</span>, <span class="st">"type"</span>: <span class="st">"url"</span>, <span class="st">"meta"</span>: {<span class="st">"amcat4_type"</span>: <span class="st">"url"</span>}},</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"year"</span>: {<span class="st">"name"</span>: <span class="st">"year"</span>, <span class="st">"type"</span>: <span class="st">"text"</span>},</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we can add documents:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>new_doc <span class="op">=</span> {</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"title"</span>: <span class="st">"test"</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"text"</span>: <span class="st">"test"</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"date"</span>: <span class="st">"2022-01-01"</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"president"</span>: <span class="st">"test"</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"year"</span>: <span class="st">"2022"</span>,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"party"</span>: <span class="st">"test"</span>,</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"url"</span>: <span class="st">"test"</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>amcat.upload_documents(<span class="st">"new_index"</span>, [new_doc])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>res<span class="op">=</span><span class="bu">list</span>(amcat.query(<span class="st">"new_index"</span>, fields<span class="op">=</span><span class="va">None</span>, filters<span class="op">=</span>{<span class="st">"title"</span>: <span class="st">"test"</span>}))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>pp.pprint(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally, we can also delete an index:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>amcat.delete_index(<span class="st">"new_index"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="annotinder" class="level1">
+<h1><code>annotinder</code></h1>
+<p><code>annotinder</code> currently consists of three packages: a server, a frontend and an R package. We are using the R package today, since it nicely packs all all three parts, so we can test a coding job locally.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"rlang"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">install.packages</span>(<span class="st">"rlang"</span>, <span class="at">dependencies =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>rlang<span class="sc">::</span><span class="fu">check_installed</span>(<span class="st">"remotes"</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>rlang<span class="sc">::</span><span class="fu">check_installed</span>(<span class="st">"tibble"</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span>rlang<span class="sc">::</span><span class="fu">is_installed</span>(<span class="st">"annotinder"</span>)) remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"ccs-amsterdam/annotinder-r"</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(annotinder)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>annotinder</code> structures annotations in the same way we learned before.</p>
+<ol type="1">
+<li>We select a unit of analysis and prepare our data by sorting them into units.</li>
+<li>We then define categories</li>
+<li>We put the categories in a codebook</li>
+<li>Then we annotate</li>
+</ol>
+<section id="create-units" class="level2">
+<h2 class="anchored" data-anchor-id="create-units">Create units</h2>
+<p>We create units from the included <code>mini_sotu_par</code> dataset. This data contains some paragraphs of US state of the Union adresses.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">as_tibble</span>(mini_sotu_par)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We want to use the paragraph as the unit of analysis, and so we create units by taking the text column from the data frame above. We use the <code>set_text</code> function inside <code>create_units</code> units to tell <code>annotinder</code> that we want to use plain text in the units. You can also use <code>set_markdown</code>, to get some options to style text, or <code>set_image</code>, if you want to code images.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>units <span class="ot">&lt;-</span> <span class="fu">create_units</span>(mini_sotu_par, <span class="fu">set_text</span>(<span class="at">name =</span> <span class="st">"text"</span>, <span class="at">value =</span> text), <span class="at">id =</span> <span class="st">"id"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="define-the-categories" class="level2">
+<h2 class="anchored" data-anchor-id="define-the-categories">Define the categories</h2>
+<p>Next, we need to decide on what labels/categories we want to use. We start with a simple example where we want to ask coders exactly one question and give them three options for possible categories:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>sentiment <span class="ot">&lt;-</span> <span class="fu">question</span>(<span class="at">name =</span> <span class="st">"sentiment"</span>, </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">question =</span> <span class="st">"What is the sentiment of this text?"</span>,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">type =</span> <span class="st">"buttons"</span>,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">codes =</span> <span class="fu">c</span>(<span class="at">crimson =</span> <span class="st">"Negative"</span>, <span class="at">grey =</span> <span class="st">"Neutral"</span>, <span class="at">lightgreen =</span> <span class="st">"Positive"</span>),</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">instruction =</span> <span class="st">"What attitude or feeling towards the subject is expressed in the text (if not neutral)."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Note that we can use colours here to influence how the buttons in the interface will look like. We can now put this into the codebook</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>codebook <span class="ot">&lt;-</span>  <span class="fu">create_codebook</span>(sentiment)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="codeannotate-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="codeannotate-the-data">Code/annotate the data</h2>
+<p>We can now create a “job” which contains units and codebook.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>job <span class="ot">&lt;-</span> <span class="fu">create_job</span>(<span class="at">title =</span> <span class="st">"simple_example"</span>, <span class="at">units =</span> units, <span class="at">codebook =</span> codebook)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co"># overwrite = TRUE is used for demonstration purposes, use with caution!</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>job_db <span class="ot">&lt;-</span> <span class="fu">create_job_db</span>(job, <span class="at">overwrite =</span> <span class="cn">TRUE</span>) </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>job_db</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Each job is written to a SQLite database (unless you upload it to a server).</p>
+<p>You can then start annotinder locally by pointing it to the database:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">start_annotator</span>(job_db)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="analyze-the-outcome" class="level2">
+<h2 class="anchored" data-anchor-id="analyze-the-outcome">Analyze the outcome</h2>
+<p>We skip reliability and scaling for now, as this is only a test run to see if our annotation scheme makes sense.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">gimme_annotations</span>(job_db)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>results <span class="sc">|&gt;</span> </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>results <span class="sc">|&gt;</span> </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(mini_sotu_par) <span class="sc">|&gt;</span> </span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(value, party)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="a-few-more-examples" class="level2">
+<h2 class="anchored" data-anchor-id="a-few-more-examples">A few more examples</h2>
+<p><code>annotinder</code> very versatile and you can change the look and functioning of almost any aspect of the tool to fit your content analysis needs. For example, you could add a welcome to the coding job above:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>welcome <span class="ot">&lt;-</span> <span class="fu">create_unit</span>(</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"id"</span>,</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"train"</span>,</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_text</span>(<span class="st">"text"</span>, <span class="st">"Welcome to AnnoTinder!"</span>),</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_question</span>(<span class="at">name =</span> <span class="st">"welcome"</span>, <span class="at">question =</span> <span class="st">"Start Annotating"</span>, <span class="at">type =</span> <span class="st">"confirm"</span>)</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>job <span class="ot">&lt;-</span> <span class="fu">create_job</span>(<span class="at">title =</span> <span class="st">"simple_example"</span>, <span class="at">units =</span> <span class="fu">c</span>(welcome, units), <span class="at">codebook =</span> codebook)</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="co"># overwrite = TRUE is used for demonstration purposes, use with caution!</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>job_db <span class="ot">&lt;-</span> <span class="fu">create_job_db</span>(job, <span class="at">overwrite =</span> <span class="cn">TRUE</span>) </span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="fu">start_annotator</span>(job_db)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You can also use an annotinder type question, which works great on mobile!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>sentiment <span class="ot">&lt;-</span> <span class="fu">question</span>(<span class="st">"sentiment"</span>, <span class="st">"Swipe left for negative, right for positive, and up for neutral"</span>,</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"annotinder"</span>,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">codes =</span> <span class="fu">c</span>(<span class="at">crimson =</span> <span class="st">"Negative"</span>, <span class="at">grey =</span> <span class="st">"Neutral"</span>, <span class="at">lightgreen =</span> <span class="st">"Positive"</span>)</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>codebook <span class="ot">&lt;-</span> <span class="fu">create_codebook</span>(sentiment)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>job <span class="ot">&lt;-</span> <span class="fu">create_job</span>(<span class="at">title =</span> <span class="st">"simple_example"</span>, <span class="at">units =</span> units, <span class="at">codebook =</span> codebook)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>job_db <span class="ot">&lt;-</span> <span class="fu">create_job_db</span>(job, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="fu">start_annotator</span>(job_db)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="media/annotinder.png" class="img-fluid" style="width:30.0%"></p>
+<p>As said before, you can also code images. And you can ask more than one question:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>units_img <span class="ot">&lt;-</span> <span class="fu">create_units</span>(</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">id =</span> 2L, <span class="at">name =</span> <span class="st">"img"</span>, <span class="at">caption =</span> <span class="st">""</span>,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">value =</span> <span class="st">"https://gifdb.com/images/thumbnail/pusheen-cat-welcome-rs7fmtp64fodfdqr.gif"</span>),</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_image</span>(</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"img"</span>, </span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">value =</span> value,</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">margin =</span> <span class="st">"5px"</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"id"</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>q1 <span class="ot">&lt;-</span> <span class="fu">question</span>(<span class="at">name =</span> <span class="st">"fav_animal"</span>, </span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>           <span class="at">type =</span> <span class="st">"dropdown"</span>,</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>           <span class="at">question =</span> <span class="st">"What's your favourite type of animal?"</span>,</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>           <span class="at">codes =</span> <span class="fu">c</span>(<span class="st">"Birds"</span>, <span class="st">"Mammals"</span>, <span class="st">"Insects"</span>, <span class="st">"Fish"</span>),</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>           <span class="at">instruction =</span> <span class="st">"# Codebook instruction</span><span class="sc">\n\n</span><span class="st">You can integrate your codebook instructions directly in your codingjobs. These instructions will be shown the first time users open a unit with this codebook, and they can open it again by clicking the questionmark at the bottom-left"</span>)</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>q2 <span class="ot">&lt;-</span> <span class="fu">question</span>(<span class="at">name =</span> <span class="st">"open question"</span>,</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>               <span class="at">question =</span> <span class="st">"Waht do you see here?"</span>,</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">"inputs"</span>)</span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>codebook_img <span class="ot">&lt;-</span> <span class="fu">create_codebook</span>(q1, q2)</span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>job <span class="ot">&lt;-</span> <span class="fu">create_job</span>(<span class="at">title =</span> <span class="st">"images"</span>, <span class="at">units =</span> units_img, <span class="at">codebook =</span> codebook_img)</span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>job_db <span class="ot">&lt;-</span> <span class="fu">create_job_db</span>(job, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a><span class="fu">start_annotator</span>(job_db)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gimme_annotations</span>(job_db)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>There is also a survey mode:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>feelings <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"perfect"</span>, <span class="st">"good"</span>, <span class="st">"OK"</span>, <span class="st">"bad"</span>, <span class="st">"horrible"</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>survey_questions <span class="ot">&lt;-</span> <span class="fu">create_unit</span>(</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"1"</span>,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"survey"</span>,</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_question</span>(<span class="st">"1"</span>, <span class="st">"How do you feel today?"</span>, <span class="at">type =</span> <span class="st">"scale"</span>, <span class="at">codes =</span> feelings),</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_question</span>(<span class="st">"2"</span>, <span class="st">"How did you feel on average this week?"</span>, <span class="at">type =</span> <span class="st">"scale"</span>, <span class="at">codes =</span> feelings),</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_question</span>(<span class="st">"3"</span>, <span class="st">"How did you feel on average this month?"</span>, <span class="at">type =</span> <span class="st">"scale"</span>, <span class="at">codes =</span> feelings)</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>survey_job <span class="ot">&lt;-</span> <span class="fu">create_job</span>(<span class="st">"survey"</span>, survey_questions)</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>job_db <span class="ot">&lt;-</span> <span class="fu">create_job_db</span>(survey_job, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="fu">start_annotator</span>(job_db)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And an annotation mode, which lets people put categories to smaller units text units via highlighting:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>sentiment <span class="ot">&lt;-</span> <span class="fu">question</span>(<span class="at">name =</span> <span class="st">"sentiment"</span>, </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">question =</span> <span class="st">"What is the sentiment of this text?"</span>,</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">type =</span> <span class="st">"buttons"</span>,</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">codes =</span> <span class="fu">c</span>(<span class="at">crimson =</span> <span class="st">"Negative"</span>, <span class="at">grey =</span> <span class="st">"Neutral"</span>, <span class="at">lightgreen =</span> <span class="st">"Positive"</span>),</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">instruction =</span> <span class="st">"What attitude or feeling towards the subject is expressed in the text (if not neutral)."</span>)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>sentiment <span class="ot">&lt;-</span> <span class="fu">annotation_variable</span>(</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"sentiment"</span>, </span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">instruction =</span> <span class="st">"Please select portions of the text that communicate a sentiment"</span>,</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">codes =</span> <span class="fu">c</span>(<span class="at">crimson =</span> <span class="st">"Negative"</span>, <span class="at">lightgreen =</span> <span class="st">"Positive"</span>)</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>codebook <span class="ot">&lt;-</span> <span class="fu">create_codebook</span>(sentiment)</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>job <span class="ot">&lt;-</span> <span class="fu">create_job</span>(<span class="at">title =</span> <span class="st">"annotation"</span>, <span class="at">units =</span> units, <span class="at">codebook =</span> codebook)</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>job_db <span class="ot">&lt;-</span> <span class="fu">create_job_db</span>(job, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a><span class="fu">start_annotator</span>(job_db)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>There are many more features covered in an introduction styled as a coding job here: <a href="https://annotinder.com/demo?units=introduction&amp;codebook=dummy" class="uri">https://annotinder.com/demo?units=introduction&amp;codebook=dummy</a></p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

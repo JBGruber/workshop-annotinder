@@ -9,3 +9,12 @@ notes.md
 media/amcat-test_key.pem
 media/machine-learning.pptx
 media/unit_files
+cache_dir
+outputs
+runs
+1_introducing-amcat-annotinder_files
+2_content-analysis_files
+3_annotation_example_files
+4_supervised-learning_files
+0_Syllabus.qmd
+0_Syllabus.pdf

@@ -190,7 +190,7 @@ image_resize(overview, geometry_size_percent(95))
 - Ensures that coding is consistent, accurate, and replicable
 - Discover problems or inconsistencies in your categories/codebook
 - Enhances the credibility and trustworthiness of research findings
-- What is good reliability? $\alpha$ > 0.8 = *reliable*, 0.8 > $\alpha$ > 0.667 = *tentative conclusions*, etc. [@Krippendorff, pp. 241-243]
+- What is good reliability? $\alpha$ > 0.8 = *reliable*, 0.8 > $\alpha$ > 0.667 = *tentative conclusions*, etc. [@krippendorff2004, pp. 241-243]
 
 ![](media/intercoder1.png){.fragment .absolute}
 ![](media/ca-circle.png){.absolute top=80 left=900 height="600"}
