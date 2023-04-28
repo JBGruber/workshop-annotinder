@@ -18,3 +18,4 @@ runs
 4_supervised-learning_files
 0_Syllabus.qmd
 0_Syllabus.pdf
+docker-compose.yml

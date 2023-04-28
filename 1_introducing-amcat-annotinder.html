@@ -147,6 +147,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>Two main goals: to <strong>standardize</strong> text analysis tasks with <strong>easy to use software</strong> (while offering quality-of-life features for power users)</li>
 <li>Great way to store, search, share and present data collections for teams or individual researchers</li>
 <li>Funded by OPTED – Observatory for Political Texts in European Democracies</li>
+<li>All software packages are on GitHub for everyone to contribute (complaining is also a contribution!)</li>
 </ul>
 <p><img src="media/amcat-flow.drawio.png" class="img-fluid"></p>
 <p>(Learn more at <a href="https://amcat.nl/" class="uri">https://amcat.nl/</a>)</p>
@@ -173,7 +174,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li>You are part of a team of researchers doing text analysis</li>
 <li>You want to share your data in a safe way (with fine-grained access management for different parts of the data)</li>
-<li>You have large datasets that are better stored on a server and you need server software made for researchers</li>
+<li>You have large datasets that are better stored on a server and you need server software made for researchers (but you don’t want to first learn about databases and APIs)</li>
 </ul>
 </section>
 <section id="installing-the-amcat-suite-locally-through-docker" class="level2">
@@ -382,14 +383,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"new_index"</span>,</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    {</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"date"</span>: {<span class="st">"name"</span>: <span class="st">"date"</span>, <span class="st">"type"</span>: <span class="st">"date"</span>},</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"party"</span>: {<span class="st">"name"</span>: <span class="st">"party"</span>, <span class="st">"type"</span>: <span class="st">"text"</span>},</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"president"</span>: {<span class="st">"name"</span>: <span class="st">"president"</span>, <span class="st">"type"</span>: <span class="st">"text"</span>},</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"text"</span>: {<span class="st">"name"</span>: <span class="st">"text"</span>, <span class="st">"type"</span>: <span class="st">"text"</span>},</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"title"</span>: {<span class="st">"name"</span>: <span class="st">"title"</span>, <span class="st">"type"</span>: <span class="st">"text"</span>},</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"url"</span>: {<span class="st">"name"</span>: <span class="st">"url"</span>, <span class="st">"type"</span>: <span class="st">"url"</span>, <span class="st">"meta"</span>: {<span class="st">"amcat4_type"</span>: <span class="st">"url"</span>}},</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"year"</span>: {<span class="st">"name"</span>: <span class="st">"year"</span>, <span class="st">"type"</span>: <span class="st">"text"</span>},</span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    },</span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"party"</span>: {<span class="st">"name"</span>: <span class="st">"party"</span>, <span class="st">"type"</span>: <span class="st">"keyword"</span>},</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"president"</span>: {<span class="st">"name"</span>: <span class="st">"president"</span>, <span class="st">"type"</span>: <span class="st">"keyword"</span>},</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"url"</span>: {<span class="st">"name"</span>: <span class="st">"url"</span>, <span class="st">"type"</span>: <span class="st">"url"</span>, <span class="st">"meta"</span>: {<span class="st">"amcat4_type"</span>: <span class="st">"url"</span>}},</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"year"</span>: {<span class="st">"name"</span>: <span class="st">"year"</span>, <span class="st">"type"</span>: <span class="st">"double"</span>},</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we can add documents:</p>
 <div class="cell">
@@ -398,7 +397,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"text"</span>: <span class="st">"test"</span>,</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"date"</span>: <span class="st">"2022-01-01"</span>,</span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"president"</span>: <span class="st">"test"</span>,</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"year"</span>: <span class="st">"2022"</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"year"</span>: <span class="dv">2022</span>,</span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"party"</span>: <span class="st">"test"</span>,</span>
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"url"</span>: <span class="st">"test"</span></span>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>}</span>
@@ -416,7 +415,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="annotinder" class="level1">
 <h1><code>annotinder</code></h1>
-<p><code>annotinder</code> currently consists of three packages: a server, a frontend and an R package. We are using the R package today, since it nicely packs all all three parts, so we can test a coding job locally.</p>
+<p><code>annotinder</code> currently consists of three packages: a server, a frontend and an R package. We are using the R package today, since it nicely packs all all three parts, so we can test a coding job locally. R is similar to Python, with just a couple of differences in the syntax:</p>
+<ul>
+<li>to create an object we use <code>&lt;-</code> instead of <code>=</code> (but <code>=</code> also works)</li>
+<li>packages are imported with <code>library()</code> or only individual functions are used via <code>package::function()</code></li>
+<li>formatting does not really matter (it’s not part of the syntax)</li>
+<li>if you have R installed, you should be able to just execute the chunks below</li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"rlang"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">install.packages</span>(<span class="st">"rlang"</span>, <span class="at">dependencies =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>rlang<span class="sc">::</span><span class="fu">check_installed</span>(<span class="st">"remotes"</span>)</span>
@@ -426,7 +431,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><code>annotinder</code> structures annotations in the same way we learned before.</p>
+<p><code>annotinder</code> structures annotations in the same way as recommended in content analysis (more in the next session).</p>
 <ol type="1">
 <li>We select a unit of analysis and prepare our data by sorting them into units.</li>
 <li>We then define categories</li>

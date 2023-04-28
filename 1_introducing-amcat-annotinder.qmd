@@ -16,6 +16,7 @@ execute:
 - Two main goals: to **standardize** text analysis tasks with **easy to use software** (while offering quality-of-life features for power users)
 - Great way to store, search, share and present data collections for teams or individual researchers
 - Funded by OPTED -- Observatory for Political Texts in European Democracies
+- All software packages are on GitHub for everyone to contribute (complaining is also a contribution!)
 
 ![](media/amcat-flow.drawio.png)
 
@@ -44,7 +45,7 @@ Example: Cool collection of text repositories and tools: <https://meteor.opted.e
 
 - You are part of a team of researchers doing text analysis
 - You want to share your data in a safe way (with fine-grained access management for different parts of the data)
-- You have large datasets that are better stored on a server and you need server software made for researchers
+- You have large datasets that are better stored on a server and you need server software made for researchers (but you don't want to first learn about databases and APIs)
 
 ## Installing the AmCAT suite locally through Docker
 
@@ -264,12 +265,10 @@ amcat.set_fields(
     "new_index",
     {
         "date": {"name": "date", "type": "date"},
-        "party": {"name": "party", "type": "text"},
-        "president": {"name": "president", "type": "text"},
-        "text": {"name": "text", "type": "text"},
-        "title": {"name": "title", "type": "text"},
+        "party": {"name": "party", "type": "keyword"},
+        "president": {"name": "president", "type": "keyword"},
         "url": {"name": "url", "type": "url", "meta": {"amcat4_type": "url"}},
-        "year": {"name": "year", "type": "text"},
+        "year": {"name": "year", "type": "double"},
     },
 )
 ```
@@ -282,7 +281,7 @@ new_doc = {
   "text": "test",
   "date": "2022-01-01",
   "president": "test",
-  "year": "2022",
+  "year": 2022,
   "party": "test",
   "url": "test"
 }
@@ -304,6 +303,12 @@ amcat.delete_index("new_index")
 
 `annotinder` currently consists of three packages: a server, a frontend and an R package.
 We are using the R package today, since it nicely packs all all three parts, so we can test a coding job locally.
+R is similar to Python, with just a couple of differences in the syntax:
+
+- to create an object we use `<-` instead of `=` (but `=` also works)
+- packages are imported with `library()` or only individual functions are used via `package::function()`
+- formatting does not really matter (it's not part of the syntax)
+- if you have R installed, you should be able to just execute the chunks below
 
 ```{r}
 if (!requireNamespace("rlang", quietly = TRUE)) install.packages("rlang", dependencies = TRUE)
@@ -315,7 +320,7 @@ library(dplyr)
 library(ggplot2)
 ```
 
-`annotinder` structures annotations in the same way we learned before.
+`annotinder` structures annotations in the same way as recommended in content analysis (more in the next session).
 
 1. We select a unit of analysis and prepare our data by sorting them into units.
 2. We then define categories
@@ -343,7 +348,6 @@ units <- create_units(mini_sotu_par, set_text(name = "text", value = text), id =
 
 Next, we need to decide on what labels/categories we want to use.
 We start with a simple example where we want to ask coders exactly one question and give them three options for possible categories:
-
 
 ```{r}
 sentiment <- question(name = "sentiment", 
